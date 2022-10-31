@@ -1,6 +1,7 @@
 package service
 
 import (
+	"database/sql"
 	"errors"
 	"github.com/torikki-tou/go-transaction/common"
 	"github.com/torikki-tou/go-transaction/dto"
@@ -28,6 +29,8 @@ func (c *clientService) ChangeBalance(request dto.ChangeBalance) error {
 	if err != nil {
 		if errors.Is(err, &common.LowBalanceError{}) {
 			return err
+		} else if errors.Is(err, sql.ErrNoRows) {
+			return &common.ClientNotFoundError{}
 		} else {
 			return &common.InternalBDError{}
 		}

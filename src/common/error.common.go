@@ -15,5 +15,11 @@ func (l *InternalBDError) Error() string {
 type NotificationError struct{}
 
 func (l *NotificationError) Error() string {
-	return "Notification was not published"
+	return "notification was not published"
+}
+
+type ClientNotFoundError struct{}
+
+func (l *ClientNotFoundError) Error() string {
+	return "client not found"
 }

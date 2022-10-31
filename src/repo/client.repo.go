@@ -32,17 +32,13 @@ func (c *clientRepository) ChangeBalance(clientId string, delta int) (int, error
 	}
 
 	var balance int
-	rows, err := tx.QueryContext(ctx, fmt.Sprintf("SELECT balance FROM clients WHERE id = '%s'", clientId))
+	err = tx.QueryRowContext(
+		ctx,
+		fmt.Sprintf("SELECT balance FROM clients WHERE id = '%s'", clientId),
+	).Scan(&balance)
 	if err != nil {
 		_ = tx.Rollback()
 		return 0, err
-	}
-	defer func(rows *sql.Rows) { _ = rows.Close() }(rows)
-	for rows.Next() {
-		err := rows.Scan(&balance)
-		if err != nil {
-			return 0, err
-		}
 	}
 
 	changedBalance := balance + delta

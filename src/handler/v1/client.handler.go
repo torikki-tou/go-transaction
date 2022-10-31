@@ -38,6 +38,8 @@ func (c clientHandler) ChangeBalance(ctx *gin.Context) {
 			ctx.AbortWithStatusJSON(http.StatusInternalServerError, err.Error())
 		} else if errors.Is(err, &common.InternalBDError{}) {
 			ctx.AbortWithStatus(http.StatusInternalServerError)
+		} else if errors.Is(err, &common.ClientNotFoundError{}) {
+			ctx.AbortWithStatus(http.StatusNotFound)
 		} else if errors.Is(err, &common.NotificationError{}) {
 			ctx.JSON(http.StatusOK, gin.H{"warning": err.Error()})
 		}
