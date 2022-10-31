@@ -6,7 +6,7 @@
 
 ### How to use
 
-`0.0.0.0:8000/api/client/change_balance` - PDAdmin
+`0.0.0.0:5050` - PDAdmin
 
 - User: admin@admin.com
 - Password: root
@@ -33,3 +33,8 @@ Request examples:
     "delta": -10
 }
 ```
+
+`0.0.0.0:15672` - RabbitMQ GIU
+
+- User: guest
+- Password: guest
