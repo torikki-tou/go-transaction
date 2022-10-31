@@ -3,10 +3,8 @@ package config
 import (
 	"database/sql"
 	"fmt"
-	"math/rand"
-	"time"
-
 	_ "github.com/lib/pq"
+	"math/rand"
 )
 
 var letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
@@ -35,8 +33,6 @@ func InitDB(db *sql.DB) {
 		return
 	}
 
-	rand.Seed(time.Now().UnixNano())
-
 	_, err = db.Exec(
 		"CREATE TABLE clients (id varchar(7) primary key, balance int)",
 	)
@@ -44,7 +40,7 @@ func InitDB(db *sql.DB) {
 		panic(err)
 	}
 
-	for i := 0; i < 100; i++ {
+	for i := 0; i < 10; i++ {
 		_, err = db.Exec(
 			fmt.Sprintf(
 				"INSERT INTO clients (id, balance) VALUES ('%s', '%d')", randStr(7), rand.Intn(90)+10),
@@ -66,8 +62,5 @@ func SetupDatabaseConnection() *sql.DB {
 }
 
 func CloseDatabaseConnection(db *sql.DB) {
-	err := db.Close()
-	if err != nil {
-		panic(err)
-	}
+	_ = db.Close()
 }

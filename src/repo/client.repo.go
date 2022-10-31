@@ -8,21 +8,21 @@ import (
 	"github.com/torikki-tou/go-transaction/common"
 )
 
-type UserRepository interface {
+type ClientRepository interface {
 	ChangeBalance(clientId string, delta int) (int, error)
 }
 
-type userRepository struct {
+type clientRepository struct {
 	db *sql.DB
 }
 
-func NewUserRepository(db *sql.DB) UserRepository {
-	return &userRepository{
+func NewClientRepository(db *sql.DB) ClientRepository {
+	return &clientRepository{
 		db: db,
 	}
 }
 
-func (c *userRepository) ChangeBalance(clientId string, delta int) (int, error) {
+func (c *clientRepository) ChangeBalance(clientId string, delta int) (int, error) {
 	ctx := context.Background()
 	tx, err := c.db.BeginTx(ctx, &sql.TxOptions{
 		Isolation: sql.LevelSerializable,

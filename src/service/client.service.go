@@ -1,28 +1,40 @@
 package service
 
 import (
+	"errors"
+	"github.com/torikki-tou/go-transaction/common"
 	"github.com/torikki-tou/go-transaction/dto"
 	"github.com/torikki-tou/go-transaction/repo"
 )
 
-type UserService interface {
+type ClientService interface {
 	ChangeBalance(request dto.ChangeBalance) error
 }
 
-type userService struct {
-	userRepo repo.UserRepository
+type clientService struct {
+	clientRepo repo.ClientRepository
+	queueRepo  repo.QueueRepository
 }
 
-func NewUserService(userRepo repo.UserRepository) UserService {
-	return &userService{
-		userRepo: userRepo,
+func NewClientService(clientRepo repo.ClientRepository, queueRepo repo.QueueRepository) ClientService {
+	return &clientService{
+		clientRepo: clientRepo,
+		queueRepo:  queueRepo,
 	}
 }
 
-func (c *userService) ChangeBalance(request dto.ChangeBalance) error {
-	_, err := c.userRepo.ChangeBalance(request.ClientID, request.Delta)
+func (c *clientService) ChangeBalance(request dto.ChangeBalance) error {
+	changedBalance, err := c.clientRepo.ChangeBalance(request.ClientID, request.Delta)
 	if err != nil {
-		return err
+		if errors.Is(err, &common.LowBalanceError{}) {
+			return err
+		} else {
+			return &common.InternalBDError{}
+		}
+	}
+	err = c.queueRepo.ProduceNotification(request.ClientID, request.Delta, changedBalance)
+	if err != nil {
+		return &common.NotificationError{}
 	}
 	return nil
 }

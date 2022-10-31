@@ -16,12 +16,12 @@ type ClientHandler interface {
 }
 
 type clientHandler struct {
-	userService service.UserService
+	clientService service.ClientService
 }
 
-func NewClientHandler(userService service.UserService) ClientHandler {
+func NewClientHandler(clientService service.ClientService) ClientHandler {
 	return &clientHandler{
-		userService: userService,
+		clientService: clientService,
 	}
 }
 
@@ -32,12 +32,14 @@ func (c clientHandler) ChangeBalance(ctx *gin.Context) {
 		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, err)
 	}
 
-	err = c.userService.ChangeBalance(changeBalanceRequest)
+	err = c.clientService.ChangeBalance(changeBalanceRequest)
 	if err != nil {
 		if errors.Is(err, &common.LowBalanceError{}) {
 			ctx.AbortWithStatusJSON(http.StatusInternalServerError, err.Error())
-		} else {
+		} else if errors.Is(err, &common.InternalBDError{}) {
 			ctx.AbortWithStatus(http.StatusInternalServerError)
+		} else if errors.Is(err, &common.NotificationError{}) {
+			ctx.JSON(http.StatusOK, gin.H{"warning": err.Error()})
 		}
 	}
 

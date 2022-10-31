@@ -25,5 +25,10 @@ services:
     ports:
       - "5050:80"
 
+  queue:
+    image: rabbitmq:management
+    ports:
+      - '15672:15672'
+
 volumes:
   postgres:
