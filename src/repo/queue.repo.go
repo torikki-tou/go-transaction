@@ -46,8 +46,9 @@ func (p *queueRepository) ProduceNotification(clientID string, delta int, change
 		false,
 		false,
 		ampq.Publishing{
-			ContentType: "application/json",
-			Body:        body,
+			DeliveryMode: ampq.Persistent,
+			ContentType:  "application/json",
+			Body:         body,
 		})
 	if err != nil {
 		return err

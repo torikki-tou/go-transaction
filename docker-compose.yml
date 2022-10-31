@@ -27,7 +27,7 @@ services:
 
   queue:
     image: rabbitmq:management
-    hostname: queue
+    hostname: rabbit
     volumes:
       - rabbitmq:/var/lib/rabbitmq
     ports:

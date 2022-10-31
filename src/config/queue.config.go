@@ -13,7 +13,7 @@ func InitQueue(con *ampq.Connection) {
 
 	_, err = ch.QueueDeclare(
 		QueueName,
-		false,
+		true,
 		false,
 		false,
 		false,
@@ -25,7 +25,7 @@ func InitQueue(con *ampq.Connection) {
 }
 
 func SetupRabbitMQConnection() *ampq.Connection {
-	con, err := ampq.Dial("amqp://guest:guest@queue:5672/")
+	con, err := ampq.Dial("amqp://guest:guest@rabbit:5672/")
 	if err != nil {
 		panic(err)
 	}
